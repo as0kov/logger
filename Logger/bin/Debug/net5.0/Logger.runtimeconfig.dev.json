@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "/home/vega/.dotnet/store/|arch|/|tfm|",
+      "/home/vega/.nuget/packages"
+    ]
+  }
+}
