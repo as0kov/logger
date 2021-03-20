@@ -71,8 +71,8 @@ namespace Logger
         public override string ToString()
         {
             var logMessage = new StringBuilder();
-            logMessage.Append($"{_dateTime.Day}.{_dateTime.Month}.{_dateTime.Year} "
-                              + $"{_dateTime.Hour}:{_dateTime.Minute}:{_dateTime.Second} "
+            logMessage.Append($"{Date} "
+                              + $"{Time} "
                               + $"({_level.ToString().ToUpper()}) : ");
 
             _message.IfSome(msg => logMessage.Append(msg + "\n"));
@@ -106,10 +106,21 @@ namespace Logger
         public Task WriteToLogFile()
         {
             var log = ToString();
-            var logByDateFolder = $"./logs/{_dateTime.Day}-{_dateTime.Month}-{_dateTime.Year}";
+            var logByDateFolder = $"./logs/{Date}";
             Directory.CreateDirectory(logByDateFolder);
             return File.AppendAllTextAsync($"{logByDateFolder}/{_level}.log", log);
         }
+
+        private string Date => string.Join(
+            "-", 
+            _dateTime.Day.ToString().PadLeft(2,'0'),
+            _dateTime.Month.ToString().PadLeft(2, '0'),
+            _dateTime.Year.ToString().PadLeft(2, '0'));
+        private string Time => string.Join(
+            ":", 
+            _dateTime.Hour.ToString().PadLeft(2, '0'),
+            _dateTime.Minute.ToString().PadLeft(2, '0'),
+            _dateTime.Second.ToString().PadLeft(2, '0'));
 
         /// <summary>
         /// Gets hash code of log content except DateTime
@@ -121,7 +132,7 @@ namespace Logger
 
             return
                 GetHashCode(_arguments) +
-                +GetHashCode(_exception)
+                + GetHashCode(_exception)
                 + _level.GetHashCode()
                 + GetHashCode(_message)
                 + GetHashCode(_properties);
