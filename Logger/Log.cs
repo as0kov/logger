@@ -17,17 +17,16 @@ namespace Logger
         Info,
         Debug
     }
-
+    
     public record Log
     {
         private readonly DateTime _dateTime = DateTime.Now;
         private Option<object[]> _arguments;
         private Option<Exception> _exception;
-        private Level _level = Level.Info;
+        public Level Level = Level.Info;
         private Option<string> _message;
         private Option<Dictionary<object, object>> _properties;
         public bool IsMustBeUnique { get; private init; }
-
         public Log WithMessage(string message)
         {
             return this with
@@ -40,7 +39,7 @@ namespace Logger
         {
             return this with
             {
-                _level = level
+                Level = level
             };
         }
 
@@ -71,17 +70,22 @@ namespace Logger
         public override string ToString()
         {
             var logMessage = new StringBuilder();
+            
             logMessage.Append($"{Date} "
                               + $"{Time} "
-                              + $"({_level.ToString().ToUpper()}) : ");
+                              + $"({Level.ToString().ToUpper()}) : ");
 
             _message.IfSome(msg => logMessage.Append(msg + "\n"));
+            
             _arguments.IfSome(args =>
                 logMessage.Append($"Arguments: [{string.Join(", ", args)}]" + "\n"));
+            
             _properties.IfSome(
-                props => logMessage.Append(
-                    $"Properties: [{string.Join(", ", props.Select(pair => $"{pair.Key} => {pair.Value}"))}]"
-                    + "\n"));
+                props =>
+                    logMessage.Append(
+                        $"Properties: [{string.Join(", ", props.Select(pair => $"{pair.Key} => {pair.Value}"))}]"
+                        + "\n"));
+            
             _exception.IfSome(ex =>
             {
                 logMessage.Append(ex.Message + "\n");
@@ -99,19 +103,7 @@ namespace Logger
             };
         }
 
-        /// <summary>
-        /// Writes log to file in logs folder
-        /// </summary>
-        /// <returns></returns>
-        public Task WriteToLogFile()
-        {
-            var log = ToString();
-            var logByDateFolder = $"./logs/{Date}";
-            Directory.CreateDirectory(logByDateFolder);
-            return File.AppendAllTextAsync($"{logByDateFolder}/{_level}.log", log);
-        }
-
-        private string Date => string.Join(
+        public string Date => string.Join(
             "-", 
             _dateTime.Day.ToString().PadLeft(2,'0'),
             _dateTime.Month.ToString().PadLeft(2, '0'),
@@ -133,7 +125,7 @@ namespace Logger
             return
                 GetHashCode(_arguments) +
                 + GetHashCode(_exception)
-                + _level.GetHashCode()
+                + Level.GetHashCode()
                 + GetHashCode(_message)
                 + GetHashCode(_properties);
         }

@@ -1,11 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading.Channels;
+using System.Threading.Tasks;
+using LanguageExt;
 
 namespace Logger
 {
     public class Logger : ILog
     {
-        private static readonly HashSet<int> UniqueLogsHashes = new();
+        private Dictionary<Level, Channel<Log>> _logBuffers = new();
+
+        private static readonly System.Collections.Generic.HashSet<int> UniqueLogsHashes = new();
+
+        public Logger()
+        {
+                
+        }
+        
+        public Logger(Dictionary<Level, int> maxLogBufferSizes)
+        {
+            maxLogBufferSizes.Iter(logBufferSize =>
+            {
+                var (logLevel, logSize) = logBufferSize;
+                _logBuffers.Add(logLevel, Channel.CreateBounded<Log>(logSize));
+            });
+        }
 
         public void Fatal(string message)
         {
@@ -164,6 +185,21 @@ namespace Logger
             );
         }
 
+        /// <summary>
+        /// Add log to buffer and returns ValueTask if buffer not full else returns None
+        /// </summary>
+        /// <param name="log"></param>
+        /// <returns></returns>
+        private Task addLogToBuffer(Log log)
+        {
+            var isLogChExists = _logBuffers.ContainsKey(log.Level);
+            if (isLogChExists)
+            {
+                var logCh = _logBuffers[log.Level];
+                if (logCh)
+            }
+        }
+        
         private static void Log(Log log)
         {
             var hashCode = log.GetHashCode();
@@ -171,14 +207,23 @@ namespace Logger
             {
                 case true when !UniqueLogsHashes.Contains(hashCode):
                     UniqueLogsHashes.Add(hashCode);
-                    Console.WriteLine(log.ToString());
-                    log.WriteToLogFile();
+                    Task.Factory.StartNew(WriteLogToFile(log));
                     break;
                 case false:
-                    Console.WriteLine(log.ToString());
-                    log.WriteToLogFile();
+                    Task.Factory.StartNew(log);
                     break;
             }
+        }
+        
+        /// <summary>
+        /// Writes log to file in logs folder
+        /// </summary>
+        /// <returns></returns>
+        public static void WriteLogToFile(Log log)
+        {
+            var logByDateFolder = $"./logs/{log.Date}";
+            Directory.CreateDirectory(logByDateFolder);
+            File.AppendAllText($"{logByDateFolder}/{log.Level}.log", log.ToString());
         }
     }
 }

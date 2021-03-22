@@ -8,7 +8,10 @@ namespace Logger
     {
         private static void Main(string[] args)
         {
-            var logger = new Logger();
+            var logger = new Logger(new Dictionary<Level, int>
+            {
+                {Level.Debug, 100}
+            });
             try
             {
                 File.ReadAllBytes("adasasd");
@@ -23,8 +26,11 @@ namespace Logger
                 logger.SystemInfo("err", dict);
             }
 
-            logger.WarningUnique("aaa");
-            logger.WarningUnique("aaa");
+            for (var i = 0; i < 1000000; i++)
+            {
+                logger.Warning($"{i}");
+                logger.Warning($"b {i}");
+            }
             logger.DebugFormat("deveeb", 1, 2, 3, 2);
         }
     }

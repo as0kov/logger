@@ -5,14 +5,14 @@
 /home/vega/Загрузки/Logger/Logger/Logger/bin/Debug/net5.0/Logger.dll
 /home/vega/Загрузки/Logger/Logger/Logger/bin/Debug/net5.0/ref/Logger.dll
 /home/vega/Загрузки/Logger/Logger/Logger/bin/Debug/net5.0/Logger.pdb
+/home/vega/Загрузки/Logger/Logger/Logger/bin/Debug/net5.0/LanguageExt.Core.dll
 /home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.csprojAssemblyReference.cache
 /home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.GeneratedMSBuildEditorConfig.editorconfig
 /home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.AssemblyInfoInputs.cache
 /home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.AssemblyInfo.cs
 /home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.csproj.CoreCompileInputs.cache
+/home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.csproj.CopyComplete
 /home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.dll
 /home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/ref/Logger.dll
 /home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.pdb
 /home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.genruntimeconfig.cache
-/home/vega/Загрузки/Logger/Logger/Logger/bin/Debug/net5.0/LanguageExt.Core.dll
-/home/vega/Загрузки/Logger/Logger/Logger/obj/Debug/net5.0/Logger.csproj.CopyComplete
