@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/vega/Загрузки/Logger/Logger/Logger/Logger.csproj": {}
+    "/home/cgen/Документы/logger/Logger/Logger.csproj": {}
   },
   "projects": {
-    "/home/vega/Загрузки/Logger/Logger/Logger/Logger.csproj": {
+    "/home/cgen/Документы/logger/Logger/Logger.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/vega/Загрузки/Logger/Logger/Logger/Logger.csproj",
+        "projectUniqueName": "/home/cgen/Документы/logger/Logger/Logger.csproj",
         "projectName": "Logger",
-        "projectPath": "/home/vega/Загрузки/Logger/Logger/Logger/Logger.csproj",
-        "packagesPath": "/home/vega/.nuget/packages/",
-        "outputPath": "/home/vega/Загрузки/Logger/Logger/Logger/obj/",
+        "projectPath": "/home/cgen/Документы/logger/Logger/Logger.csproj",
+        "packagesPath": "/home/cgen/.nuget/packages/",
+        "outputPath": "/home/cgen/Документы/logger/Logger/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/vega/.nuget/NuGet/NuGet.Config"
+          "/home/cgen/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net5.0"

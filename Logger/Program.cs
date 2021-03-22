@@ -10,7 +10,7 @@ namespace Logger
         {
             var logger = new Logger(new Dictionary<Level, int>
             {
-                {Level.Debug, 100}
+                {Level.Debug, 10}
             });
             try
             {
@@ -26,12 +26,12 @@ namespace Logger
                 logger.SystemInfo("err", dict);
             }
 
-            for (var i = 0; i < 1000000; i++)
+            for (var i = 1; i < 20; i++)
             {
-                logger.Warning($"{i}");
-                logger.Warning($"b {i}");
+                logger.Debug($"{i}");
+                // logger.Warning($"b {i}");
             }
-            logger.DebugFormat("deveeb", 1, 2, 3, 2);
+            logger.Fatal("kek lmao");
         }
     }
 }

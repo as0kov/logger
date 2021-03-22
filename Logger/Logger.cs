@@ -2,12 +2,34 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using LanguageExt;
 
 namespace Logger
 {
+    public static class DateTimeExt
+    {
+        public static string Date(this DateTime dateTime)
+        {
+            return string.Join(
+                "-", 
+                dateTime.Day.ToString().PadLeft(2,'0'),
+                dateTime.Month.ToString().PadLeft(2, '0'),
+                dateTime.Year.ToString().PadLeft(2, '0'));
+        }
+
+        public static string Time(this DateTime dateTime)
+        {
+            return string.Join(
+                ":", 
+                dateTime.Hour.ToString().PadLeft(2, '0'),
+                dateTime.Minute.ToString().PadLeft(2, '0'),
+                dateTime.Second.ToString().PadLeft(2, '0'));
+        }
+    }
+    
     public class Logger : ILog
     {
         private Dictionary<Level, Channel<Log>> _logBuffers = new();
@@ -185,33 +207,55 @@ namespace Logger
             );
         }
 
-        /// <summary>
-        /// Add log to buffer and returns ValueTask if buffer not full else returns None
-        /// </summary>
-        /// <param name="log"></param>
-        /// <returns></returns>
-        private Task addLogToBuffer(Log log)
+        // TODO: Channel goes wrrrrrrrrrrrrrrrrrrrrrr
+        private async void AddLogToBuffer(Log log)
         {
-            var isLogChExists = _logBuffers.ContainsKey(log.Level);
-            if (isLogChExists)
+            var logCh = _logBuffers[log.Level];
+            if (logCh.Reader.Count < 10)
             {
-                var logCh = _logBuffers[log.Level];
-                if (logCh)
+                Console.WriteLine("aaa");
+            }
+            else
+            {
+                Console.WriteLine("bbb");
+                var bufferedLogs = logCh.Reader.ReadAllAsync();
+                var logBuilder = new StringBuilder();
+                await foreach (var bufferedLog in bufferedLogs)
+                {
+                    logBuilder.Append(bufferedLog);
+                }
+
+                WriteToLogfile(log.DateTime, log.Level, logBuilder.ToString());
             }
         }
         
-        private static void Log(Log log)
+        private void Log(Log log)
         {
             var hashCode = log.GetHashCode();
-            switch (log.IsMustBeUnique)
+            var isLogChExists = _logBuffers.ContainsKey(log.Level);
+
+            if (log.IsMustBeUnique && !UniqueLogsHashes.Contains(hashCode))
             {
-                case true when !UniqueLogsHashes.Contains(hashCode):
-                    UniqueLogsHashes.Add(hashCode);
-                    Task.Factory.StartNew(WriteLogToFile(log));
-                    break;
-                case false:
-                    Task.Factory.StartNew(log);
-                    break;
+                UniqueLogsHashes.Add(hashCode);
+                if (isLogChExists)
+                {
+                    AddLogToBuffer(log);
+                }
+                else
+                {
+                    WriteLogToFile(log);
+                }
+            }
+            else if (log.IsMustBeUnique == false)
+            {
+                if (isLogChExists)
+                {
+                    AddLogToBuffer(log);
+                }
+                else
+                {
+                    WriteLogToFile(log);
+                }
             }
         }
         
@@ -219,11 +263,16 @@ namespace Logger
         /// Writes log to file in logs folder
         /// </summary>
         /// <returns></returns>
-        public static void WriteLogToFile(Log log)
+        private static void WriteLogToFile(Log log)
         {
-            var logByDateFolder = $"./logs/{log.Date}";
+            WriteToLogfile(log.DateTime, log.Level, log.ToString());
+        }
+
+        private static async void WriteToLogfile(DateTime dateTime, Level level, string text)
+        {
+            var logByDateFolder = $"./logs/{dateTime.Date()}";
             Directory.CreateDirectory(logByDateFolder);
-            File.AppendAllText($"{logByDateFolder}/{log.Level}.log", log.ToString());
+            await File.AppendAllTextAsync($"{logByDateFolder}/{level}.log", text);
         }
     }
 }

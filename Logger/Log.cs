@@ -20,7 +20,7 @@ namespace Logger
     
     public record Log
     {
-        private readonly DateTime _dateTime = DateTime.Now;
+        public DateTime DateTime { get; } = DateTime.Now;
         private Option<object[]> _arguments;
         private Option<Exception> _exception;
         public Level Level = Level.Info;
@@ -71,8 +71,8 @@ namespace Logger
         {
             var logMessage = new StringBuilder();
             
-            logMessage.Append($"{Date} "
-                              + $"{Time} "
+            logMessage.Append($"{DateTime.Date()} "
+                              + $"{DateTime.Time()} "
                               + $"({Level.ToString().ToUpper()}) : ");
 
             _message.IfSome(msg => logMessage.Append(msg + "\n"));
@@ -102,17 +102,6 @@ namespace Logger
                 _arguments = args
             };
         }
-
-        public string Date => string.Join(
-            "-", 
-            _dateTime.Day.ToString().PadLeft(2,'0'),
-            _dateTime.Month.ToString().PadLeft(2, '0'),
-            _dateTime.Year.ToString().PadLeft(2, '0'));
-        private string Time => string.Join(
-            ":", 
-            _dateTime.Hour.ToString().PadLeft(2, '0'),
-            _dateTime.Minute.ToString().PadLeft(2, '0'),
-            _dateTime.Second.ToString().PadLeft(2, '0'));
 
         /// <summary>
         /// Gets hash code of log content except DateTime
