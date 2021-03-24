@@ -1,10 +1,8 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using LanguageExt;
 
 namespace Logger
@@ -17,16 +15,17 @@ namespace Logger
         Info,
         Debug
     }
-    
+
     public record Log
     {
-        public DateTime DateTime { get; } = DateTime.Now;
         private Option<object[]> _arguments;
         private Option<Exception> _exception;
-        public Level Level = Level.Info;
         private Option<string> _message;
         private Option<Dictionary<object, object>> _properties;
+        public Level Level = Level.Info;
+        public DateTime DateTime { get; } = DateTime.Now;
         public bool IsMustBeUnique { get; private init; }
+
         public Log WithMessage(string message)
         {
             return this with
@@ -70,22 +69,22 @@ namespace Logger
         public override string ToString()
         {
             var logMessage = new StringBuilder();
-            
+
             logMessage.Append($"{DateTime.Date()} "
                               + $"{DateTime.Time()} "
                               + $"({Level.ToString().ToUpper()}) : ");
 
             _message.IfSome(msg => logMessage.Append(msg + "\n"));
-            
+
             _arguments.IfSome(args =>
                 logMessage.Append($"Arguments: [{string.Join(", ", args)}]" + "\n"));
-            
+
             _properties.IfSome(
                 props =>
                     logMessage.Append(
                         $"Properties: [{string.Join(", ", props.Select(pair => $"{pair.Key} => {pair.Value}"))}]"
                         + "\n"));
-            
+
             _exception.IfSome(ex =>
             {
                 logMessage.Append(ex.Message + "\n");
@@ -104,7 +103,7 @@ namespace Logger
         }
 
         /// <summary>
-        /// Gets hash code of log content except DateTime
+        ///     Gets hash code of log content except DateTime
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
@@ -112,8 +111,7 @@ namespace Logger
             Func<Option<object>, int> GetHashCode = option => { return option.Match(o => o.GetHashCode(), () => 0); };
 
             return
-                GetHashCode(_arguments) +
-                + GetHashCode(_exception)
+                GetHashCode(_arguments)
                 + Level.GetHashCode()
                 + GetHashCode(_message)
                 + GetHashCode(_properties);
