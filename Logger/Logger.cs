@@ -206,7 +206,7 @@ namespace Logger
         /// <returns></returns>
         private static void WriteLogToFile(Log log)
         {
-            Task.Factory.StartNew(
+            new Task(
                     async () => await WriteToLogfileAsync(log.DateTime, log.Level, log.ToString())
                 )
                 .RunSynchronously();
